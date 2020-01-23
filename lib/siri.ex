@@ -20,13 +20,23 @@ defmodule Siri do
       "Sorry, I don't understand."
   """
   def answer(question) do
-    cond do
-      [_, a, b] = Regex.run(~r/^Add (\d+) to (\d+)./, question) -> add(a, b)
-      [_, a, b] = Regex.run(~r/^Subtract (\d+) from (\d+)./, question) -> subtract(b, a)
-      true -> "Sorry, I don't understand."
+    {question, nil}
+    |> try_pattern(~r/^Add (\d+) to (\d+)./, &add/1)
+    |> try_pattern(~r/^Subtract (\d+) from (\d+)./, &subtract/1)
+    |> return_answer()
+  end
+
+  defp try_pattern({question, nil}, pattern, handler) do
+    case Regex.run(pattern, question, capture: :all_but_first) do
+      nil -> {question, nil}
+      matches -> {question, handler.(matches)}
     end
   end
 
-  defp add(a, b), do: String.to_integer(a) + String.to_integer(b)
-  defp subtract(a, b), do: String.to_integer(a) - String.to_integer(b)
+  defp try_pattern(already_answered, _pattern, _handler), do: already_answered
+  defp return_answer({_question, nil}), do: "Sorry, I don't understand."
+  defp return_answer({_question, answer}), do: answer
+
+  defp add([a, b]), do: String.to_integer(a) + String.to_integer(b)
+  defp subtract([a, b]), do: String.to_integer(b) - String.to_integer(a)
 end
