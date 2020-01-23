@@ -49,6 +49,7 @@ defmodule Siri do
   defp return_answer({_question, answer}), do: answer
 
   defp add([a, b]), do: String.to_integer(a) + String.to_integer(b)
+
   defp subtract([a, b]), do: String.to_integer(b) - String.to_integer(a)
 
   defp weather([hour, minute, am_or_pm]), do: time(hour, minute, am_or_pm) |> forecast
