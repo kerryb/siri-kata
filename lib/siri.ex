@@ -1,4 +1,8 @@
 defmodule Siri do
+  @moduledoc """
+  https://github.com/kerryb/siri-kata
+  """
+
   @doc """
   Provide requested information.  According to the weather API, it is "sunny"
   from (including) 6am to 6pm (including), and "raining" the rest of the day.
