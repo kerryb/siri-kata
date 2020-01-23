@@ -6,16 +6,18 @@ defmodule Siri do
 
       iex> Siri.answer "Add 7 to 15."
       22
-
       iex> Siri.answer "Subtract 7 from 15."
       8
-
       iex> Siri.answer "What is the weather at 5:30pm?"
       "sunny"
-
-      iex> Siri.answer "What is the weather at 6:30pm?"
+      iex> Siri.answer "What is the weather at 6:00pm?"
+      "sunny"
+      iex> Siri.answer "What is the weather at 6:01pm?"
       "raining"
-
+      iex> Siri.answer "What is the weather at 5:59am?"
+      "raining"
+      iex> Siri.answer "What is the weather at 6:00am?"
+      "sunny"
       iex> Siri.answer "What is the meaning of life?"
       "Sorry, I don't understand."
   """
@@ -23,6 +25,7 @@ defmodule Siri do
     {question, nil}
     |> try_pattern(~r/^Add (\d+) to (\d+)./, &add/1)
     |> try_pattern(~r/^Subtract (\d+) from (\d+)./, &subtract/1)
+    |> try_pattern(~r/^What is the weather at (\d+):(\d+)(am|pm)?/, &weather/1)
     |> return_answer()
   end
 
@@ -42,4 +45,13 @@ defmodule Siri do
 
   defp add([a, b]), do: String.to_integer(a) + String.to_integer(b)
   defp subtract([a, b]), do: String.to_integer(b) - String.to_integer(a)
+
+  defp weather([hour, minute, am_or_pm]), do: time(hour, minute, am_or_pm) |> forecast
+
+  defp time(hour, minute, "am"), do: time(hour, minute)
+  defp time(hour, minute, "pm"), do: time(hour, minute) + 60 * 12
+  defp time(hour, minute), do: String.to_integer(hour) * 60 + String.to_integer(minute)
+
+  defp forecast(time) when time >= 60 * 6 and time <= 60 * 18, do: "sunny"
+  defp forecast(_time), do: "raining"
 end
