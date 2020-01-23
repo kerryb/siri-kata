@@ -1,6 +1,7 @@
 defmodule Siri do
   @doc """
-  Provide requested information.  According to the weather API, it is "sunny" from (including) 6am to 6pm (including), and "raining" the rest of the day.
+  Provide requested information.  According to the weather API, it is "sunny"
+  from (including) 6am to 6pm (including), and "raining" the rest of the day.
 
   Examples (these are executable doctests):
 
