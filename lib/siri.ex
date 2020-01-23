@@ -27,13 +27,16 @@ defmodule Siri do
   end
 
   defp try_pattern({question, nil}, pattern, handler) do
-    case Regex.run(pattern, question, capture: :all_but_first) do
-      nil -> {question, nil}
-      matches -> {question, handler.(matches)}
-    end
+    pattern
+    |> Regex.run(question, capture: :all_but_first)
+    |> handle_match(question, handler)
   end
 
   defp try_pattern(already_answered, _pattern, _handler), do: already_answered
+
+  defp handle_match(nil = _matches, question, _handler), do: {question, nil}
+  defp handle_match(matches, question, handler), do: {question, handler.(matches)}
+
   defp return_answer({_question, nil}), do: "Sorry, I don't understand."
   defp return_answer({_question, answer}), do: answer
 
